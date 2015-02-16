@@ -58,6 +58,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     if let tabBarViewControllers = tabBarController.viewControllers {
       
+      let mapViewController = tabBarViewControllers[2] as MapViewController
+      mapViewController.managedObjectContext = managedObjectContext
+      
       let currentLocationViewController = tabBarViewControllers[0] as CurrentLocationViewController
       currentLocationViewController.managedObjectContext = managedObjectContext
 

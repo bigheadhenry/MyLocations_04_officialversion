@@ -89,7 +89,7 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
   }
   
   func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
-    let newLocation = locations.last as CLLocation
+    let newLocation = locations.last as! CLLocation
     println("didUpdateLocations \(newLocation)")
     
     if newLocation.timestamp.timeIntervalSinceNow < -5 {
@@ -237,12 +237,34 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
     }
   }
   
-  func stringFromPlacemark(placemark: CLPlacemark) -> String {
-    return
-      "\(placemark.subThoroughfare) \(placemark.thoroughfare)\n" +
-      "\(placemark.locality) \(placemark.administrativeArea) " +
-      "\(placemark.postalCode)"
+  func addText(text: String?, toLine line: String, withSeparator separator: String) -> String {
+    var result = line
+    if let text = text {
+      if !line.isEmpty {
+        result += separator
+      }
+      result += text
+    }
+    return result
   }
+  
+  func stringFromPlacemark(placemark: CLPlacemark) -> String {
+    var line1 = ""
+    line1.addText(placemark.subThoroughfare)
+    line1.addText(placemark.thoroughfare, withSeparator: " ")
+    
+    var line2 = ""
+    line2.addText(placemark.locality)
+    line2.addText(placemark.administrativeArea, withSeparator: " ")
+    line2.addText(placemark.postalCode, withSeparator: " ")
+    
+    if line1.isEmpty {
+      return line2 + "\n"
+    } else {
+      return line1 + "\n" + line2
+    }
+  }
+
   
   func didTimeOut() {
     println("*** Time out")
@@ -259,8 +281,8 @@ class CurrentLocationViewController: UIViewController, CLLocationManagerDelegate
   
   override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
     if segue.identifier == "TagLocation" {
-      let navigationController = segue.destinationViewController as UINavigationController
-      let controller = navigationController.topViewController as LocationDetailsViewController
+      let navigationController = segue.destinationViewController as! UINavigationController
+      let controller = navigationController.topViewController as! LocationDetailsViewController
       
       controller.coordinate = location!.coordinate
       controller.placemark = placemark

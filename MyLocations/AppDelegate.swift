@@ -29,7 +29,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
         
         let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)
-        let documentsDirectory = urls[0] as NSURL
+        let documentsDirectory = urls[0] as! NSURL
         let storeURL = documentsDirectory.URLByAppendingPathComponent("DataStore.sqlite")
         
         var error: NSError?
@@ -54,22 +54,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
   func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
     
-    let tabBarController = window!.rootViewController as UITabBarController
+    customizeAppearance()
+    
+    let tabBarController = window!.rootViewController as! UITabBarController
     
     if let tabBarViewControllers = tabBarController.viewControllers {
       
-      let mapViewController = tabBarViewControllers[2] as MapViewController
+      let mapViewController = tabBarViewControllers[2] as! MapViewController
       mapViewController.managedObjectContext = managedObjectContext
       
-      let currentLocationViewController = tabBarViewControllers[0] as CurrentLocationViewController
+      let currentLocationViewController = tabBarViewControllers[0] as! CurrentLocationViewController
       currentLocationViewController.managedObjectContext = managedObjectContext
 
-      let navigationController = tabBarViewControllers[1] as UINavigationController
-      let locationsViewController = navigationController.viewControllers[0] as LocationsViewController
+      let navigationController = tabBarViewControllers[1] as! UINavigationController
+      let locationsViewController = navigationController.viewControllers[0] as! LocationsViewController
       locationsViewController.managedObjectContext = managedObjectContext
 
       // Workaround for Core Data crash on cached data.
       let forceTheViewToLoad = locationsViewController.view
+      customizeAppearance()
     }
     
     listenForFatalCoreDataNotifications()
@@ -124,6 +127,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     } else {
       return rootViewController
     }
+  }
+  
+  
+  
+  func customizeAppearance() {
+    UINavigationBar.appearance().barTintColor = UIColor.blackColor()
+    UINavigationBar.appearance().titleTextAttributes = [ NSForegroundColorAttributeName: UIColor.whiteColor() ]
+    UITabBar.appearance().barTintColor = UIColor.blackColor()
+    let tintcolor = UIColor(red: 255/255.0, green: 238/255.0, blue: 136/255.0, alpha: 1.0)
+    UITabBar.appearance().tintColor = tintcolor
   }
 }
 

@@ -47,12 +47,12 @@ class LocationsViewController: UITableViewController {
 
   override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
     if segue.identifier == "EditLocation" {
-      let navigationController = segue.destinationViewController as UINavigationController
-      let controller = navigationController.topViewController as LocationDetailsViewController
+      let navigationController = segue.destinationViewController as! UINavigationController
+      let controller = navigationController.topViewController as! LocationDetailsViewController
       controller.managedObjectContext = managedObjectContext
       
-      if let indexPath = tableView.indexPathForCell(sender as UITableViewCell) {
-        let location = fetchedResultsController.objectAtIndexPath(indexPath) as Location
+      if let indexPath = tableView.indexPathForCell(sender as! UITableViewCell) {
+        let location = fetchedResultsController.objectAtIndexPath(indexPath) as! Location
         controller.locationToEdit = location
       }
     }
@@ -61,14 +61,14 @@ class LocationsViewController: UITableViewController {
   // MARK: - UITableViewDataSource
   
   override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    let sectionInfo = fetchedResultsController.sections![section] as NSFetchedResultsSectionInfo
+    let sectionInfo = fetchedResultsController.sections![section] as! NSFetchedResultsSectionInfo
     return sectionInfo.numberOfObjects
   }
   
   override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-    let cell = tableView.dequeueReusableCellWithIdentifier("LocationCell") as LocationCell
+    let cell = tableView.dequeueReusableCellWithIdentifier("LocationCell") as! LocationCell
     
-    let location = fetchedResultsController.objectAtIndexPath(indexPath) as Location
+    let location = fetchedResultsController.objectAtIndexPath(indexPath) as! Location
     cell.configureForLocation(location)
     
     return cell
@@ -76,7 +76,10 @@ class LocationsViewController: UITableViewController {
   
   override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle,forRowAtIndexPath indexPath: NSIndexPath) {
     if editingStyle == .Delete {
-      let location = fetchedResultsController.objectAtIndexPath(indexPath) as Location
+      let location = fetchedResultsController.objectAtIndexPath(indexPath) as! Location
+      
+      location.removePhotoFile()
+      
       managedObjectContext.deleteObject(location)
       
       var error: NSError?
@@ -91,7 +94,7 @@ class LocationsViewController: UITableViewController {
   }
   
   override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-    let sectionInfo = fetchedResultsController.sections![section] as NSFetchedResultsSectionInfo
+    let sectionInfo = fetchedResultsController.sections![section] as! NSFetchedResultsSectionInfo
     return sectionInfo.name
   }
 }
@@ -115,8 +118,8 @@ extension LocationsViewController: NSFetchedResultsControllerDelegate {
       
     case .Update:
       println("*** NSFetchedResultsChangeUpdate (object)")
-      let cell = tableView.cellForRowAtIndexPath(indexPath!) as LocationCell
-      let location = controller.objectAtIndexPath(indexPath!) as Location
+      let cell = tableView.cellForRowAtIndexPath(indexPath!) as! LocationCell
+      let location = controller.objectAtIndexPath(indexPath!) as! Location
       cell.configureForLocation(location)
       
     case .Move:
